@@ -3437,7 +3437,34 @@
             country: null
         };
 
-            
+        // Detect country from IP using ipgeolocation.io
+        async function detectCountryFromIP() {
+            try {
+                const apiKey = 'd1b6324031a74385988b909519325559';
+                const response = await fetch(`https://api.ipgeolocation.io/ipgeo?apiKey=${apiKey}`);
+                const data = await response.json();
+                console.log('IP Detection response:', data);
+
+                // Store IP & Location data
+                ipLocationData.ip = data.ip || null;
+                ipLocationData.city = data.city || null;
+                ipLocationData.state = data.state_prov || null;
+                ipLocationData.country = data.country_name || null;
+
+                // ipgeolocation.io returns country_code2 (2-letter code)
+                if (data.country_code2) {
+                    return data.country_code2;
+                }
+                // Fallback to country_code if country_code2 is not available
+                if (data.country_code) {
+                    return data.country_code;
+                }
+            } catch (error) {
+                console.log('Could not detect country from IP:', error);
+            }
+            return null;
+        }
+
         // Initialize phone codes
         populatePhoneCodes();
 
@@ -4153,5 +4180,3 @@
 
 
 </html>
-
-
